@@ -31,10 +31,10 @@ class JSONManager:
         if values is None:
             return
         for val in values.split(","):
-            self.filters.append('"{}": "{}"'.format(json_filter, val))
+            self.filters.append('"{}": (")?{}(")?'.format(json_filter, val))
 
     def apply_filters(self):
-        """Process filters given by add_filter(...) function, removes itemss matching given filter"""
+        """Process filters given by add_filter(...) function, removes items matching given filter"""
         if not len(self.filters):
             return
         new_list = []
@@ -70,10 +70,10 @@ def main():
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose output")
     parser.add_argument("FILE", nargs='?', type=argparse.FileType('r'), default='-',
                         help="file in JSON format containing rust defects to be parsed")
-    parser.add_argument("--filter-level", help="comma separated list of values,"
-                                               " filter out JSON items matching given level")
-    parser.add_argument("--filter-path", help="comma separated list of values,"
-                                              " filter out JSON items matching given path")
+    parser.add_argument("--filter-opt-level", help="comma separated list of values,"
+                                               " filter out JSON items matching given opt-level")
+    parser.add_argument("--filter-debuginfo", help="comma separated list of values, "
+                                                   "filter out JSON items matching given debuginfo")
     parser.add_argument("--filter-reason", help="comma separated list of values,"
                                                 " filter out JSON items matching given reason")
     parser.add_argument("--dump", nargs='?', const='json.dump', type=str,
@@ -97,8 +97,8 @@ def main():
 
     manager = JSONManager(tmp_file)
     # Check if any filters are specified, if so, add them to the parser
-    manager.add_filter("level", args.filter_level)
-    manager.add_filter("path", args.filter_path)
+    manager.add_filter("opt_level", args.filter_opt_level)
+    manager.add_filter("debuginfo", args.filter_debuginfo)
     manager.add_filter("reason", args.filter_reason)
 
     manager.apply_filters()
